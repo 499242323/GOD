@@ -1,0 +1,16 @@
+<ivysettings> 
+    <settings defaultResolver="default" defaultConflictManager="latest-revision" override="true" defaultCacheDir="${ivy.cache.dir}"/>
+    <resolvers>
+        <ibiblio name="public" m2compatible="true" root="${ivy.public.http.root}" pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
+        <ibiblio name="3rd" m2compatible="true" root="${ivy.3rd.http.root}" pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
+        <ibiblio name="mvnRepositoryRemote" m2compatible="true" root="${ivy.mvn.http.root}" pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
+        <chain name="default">  
+			<resolver ref="public"/>  
+        	<resolver ref="3rd"/>  
+        	<resolver ref="mvnRepositoryRemote"/> 
+     	</chain>  
+    </resolvers>
+</ivysettings>  
+
+
+

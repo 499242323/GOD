@@ -1,0 +1,31 @@
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+
+    <info organisation="${corp.info}" module="jt808">
+    	<description>${corp.info}</description>
+    </info>
+    
+    <configurations>
+    	<conf name="common"/>
+		<conf name="common-build" extends="common"/>
+		<conf name="common-release" extends="common"/>
+    </configurations>
+    
+    <dependencies>
+        
+        <!-- servlet & jsp -->
+        <dependency org="javax.servlet" name="servlet-api" rev="3.1.0" conf="common-build->default;"/>
+    	<dependency org="javax.servlet.jsp" name="jsp-api" rev="2.2" conf="common-build->default;"/>
+    	
+    	<dependency org="io.netty" name="netty-all" rev="4.1.6.Final" conf="common-build->default;common-release->default"/>
+    	<dependency org="com.alibaba" name="fastjson" rev="1.2.8" conf="common-build->default;common-release->default"/>
+    	<dependency org="org.slf4j" name="slf4j-api" rev="1.7.5" conf="common-build->default;common-release->default"/>
+    	<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.5" conf="common-build->default;common-release->default"/>
+    	<dependency org="log4j" name="log4j" rev="1.2.17" conf="common-build->default;common-release->default"/>
+
+		<!-- MySQL -->
+		<dependency org="mysql" name="mysql-connector-java" rev="5.1.30" conf="common-release->default"/>
+		<!-- Oracle -->
+		<dependency org="cn.guoyukun.jdbc" name="oracle-ojdbc6" rev="11.2.0.3.0" conf="common-release->default"/>
+    </dependencies>
+    
+</ivy-module>

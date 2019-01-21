@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="openapi-admin" basedir="../" default="usage" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<property file="ant/build.properties"/>
+	<property file="ant/ivy.properties"/>
+
+	<property name="module.name" value="openapi-admin"/>
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value="bin"/>
+	<property name="app.dir" value="webapp"/>
+	<property name="lib.dir" value="lib"/>
+	<property name="ant.dir" value="ant"/>
+	<property name="config.dir" value="conf"/>
+	<property name="app.lib.dir" value="${app.dir}/WEB-INF/lib"/>
+	<property name="app.config.dir" value="${app.dir}/WEB-INF/classes"/>
+
+
+	<path id="master-classpath">
+		<fileset dir="${lib.dir}"><include name="*.jar"/></fileset>
+	</path>
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties" 
+				classpath="${ant.dir}/ant-contrib-1.0b2.jar"/>
+	
+	<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" 
+		classpath="${ant.dir}/ivy-2.2.0.jar"/>
+	<ivy:settings file="${ant.dir}/ivysettings.xml"/>
+
+
+	<!-- compile module-->
+	<target name="build-module"
+			description="compile source java files into class files and generate a jar file.">
+		<javac encoding="utf-8" destdir="${build.dir}" source="${javac.src.ver}" target="${javac.target.ver}" debug="true" includeantruntime="on"
+				deprecation="false" optimize="false" failonerror="true">
+			<src path="${src.dir}"/>
+			<classpath refid="master-classpath"/>
+		</javac>
+		<tstamp prefix="build.">
+			<format property="timesign" pattern="yyyy-MM-dd HH:mm:ss"/>
+		</tstamp>
+		<jar jarfile="${app.lib.dir}/${module.name}.jar" compress="true" basedir="${build.dir}">
+			<metainf dir="${src.dir}/META-INF">
+                 <include name="**/*.*"/>
+            </metainf>
+			<manifest>
+				<attribute name="Built-By" value="${compile.user}"/>
+				<attribute name="Specification-Title" value="${module.name}.jar"/>
+				<attribute name="Specification-Version" value="${version}"/>
+				<attribute name="Specification-Vendor" value="${corp.info}"/>
+				<attribute name="Implementation-Time" value="${build.timesign}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="build" depends="prepare-build,build-module"
+			description="compile each  components java source files into class files and generate jar files.">
+	</target>
+	
+
+	<!-- clean file -->
+	<target name="clean" description="clean output dirs of build, webclasses, weblib, docs and dist.">
+		<echo message="---------- Output files and diretories deleting.... ---------"/>
+		<delete dir="${build.dir}"/>
+		<delete dir="${classes.dir}"/>
+		<delete dir="${app.lib.dir}"/>
+		<delete dir="${lib.temp.dir}"/>
+	</target>
+	
+	<!-- prepare build-->
+	<target name="prepare-build" description="copy lib files and copy config files into classpath directory.">
+		<echo message="--------- building preparing... ---------"/>
+		<mkdir dir="${app.lib.dir}"/>
+		<copy todir="${app.lib.dir}" preservelastmodified="true">
+			<fileset dir="${lib.dir}"><include name="*.jar"/></fileset>
+		</copy>
+		<mkdir dir="${app.config.dir}"/>
+    	<copy todir="${app.config.dir}">
+			<fileset dir="${config.dir}"></fileset>
+    	</copy>
+		<native2ascii encoding="UTF-8" src="${config.dir}" dest="${app.config.dir}">
+			 <include name="*.properties"/>
+		</native2ascii>
+    </target>
+
+	<!-- easy build , developer temp use -->
+	<target name="easy-build"
+			description="compile Java sources into classes directory without building jar files.">
+		<echo message="---------- easy building... ----------"/>
+		<echo message="delete class and jar files."/>
+		<delete dir="${classes.dir}"/>
+		<delete dir="${lib.temp.dir}"/>
+		<delete includeemptydirs="false">
+			<fileset dir="${app.dir}/WEB-INF/lib" includes="${egova.base.name}.jar" defaultexcludes="false"/>
+			<fileset dir="${app.dir}/WEB-INF/lib" includes="${egova.bizbase.name}.jar" defaultexcludes="false"/>
+			<fileset dir="${app.dir}/WEB-INF/lib" includes="${egova.ali.name}.jar" defaultexcludes="false"/>
+			<fileset dir="${app.dir}/WEB-INF/lib" includes="${egova.workflow.name}.jar" defaultexcludes="false"/>
+			<fileset dir="${app.dir}/WEB-INF/lib" includes="${egova.media.name}.jar" defaultexcludes="false"/>
+			<fileset dir="${app.dir}/WEB-INF/lib" includes="${egova.form.name}.jar" defaultexcludes="false"/>
+			<fileset dir="${app.dir}/WEB-INF/lib" includes="${egova.sms.name}.jar" defaultexcludes="false"/>
+			<fileset dir="${app.dir}/WEB-INF/lib" includes="${egova.message.name}.jar" defaultexcludes="false"/>
+		</delete>
+		<echo message="generate new class and jar files."/>
+		<mkdir dir="${classes.dir}"/>
+		<javac srcdir="${src.base.dir}" destdir="${classes.dir}"
+				encoding="utf-8"  source="${javac.src.ver}" target="${javac.target.ver}" debug="true" includeantruntime="on"
+				deprecation="false" optimize="false" failonerror="true">
+			<classpath refid="master-classpath"/>
+		</javac>
+		<javac srcdir="${src.workflow.dir}" destdir="${classes.dir}"
+				encoding="utf-8"  source="${javac.src.ver}" target="${javac.target.ver}" debug="true" includeantruntime="on"
+				deprecation="false" optimize="false" failonerror="true">
+			<classpath refid="master-classpath"/>
+		</javac>
+		<javac srcdir="${src.bizbase.ex.dir}" destdir="${classes.dir}"
+				encoding="utf-8"  source="${javac.src.ver}" target="${javac.target.ver}" debug="true" includeantruntime="on"
+				deprecation="false" optimize="false" failonerror="true">
+			<classpath refid="master-classpath"/>
+		</javac>
+		<javac srcdir="${src.bizbase.dir}" destdir="${classes.dir}"
+				encoding="utf-8"  source="${javac.src.ver}" target="${javac.target.ver}" debug="true" includeantruntime="on"
+				deprecation="false" optimize="false" failonerror="true">
+			<classpath refid="master-classpath"/>
+		</javac>
+		<javac srcdir="${src.ali.dir}" destdir="${classes.dir}"
+				encoding="utf-8"  source="${javac.src.ver}" target="${javac.target.ver}" debug="true" includeantruntime="on"
+				deprecation="false" optimize="false" failonerror="true">
+			<classpath refid="master-classpath"/>
+		</javac>
+		<javac srcdir="${src.media.dir}" destdir="${classes.dir}"
+				encoding="utf-8"  source="${javac.src.ver}" target="${javac.target.ver}" debug="true" includeantruntime="on"
+				deprecation="false" optimize="false" failonerror="true">
+			<classpath refid="master-classpath"/>
+	    </javac>
+		<javac srcdir="${src.form.dir}" destdir="${classes.dir}"
+				encoding="utf-8"  source="${javac.src.ver}" target="${javac.target.ver}" debug="true" includeantruntime="on"
+				deprecation="false" optimize="false" failonerror="true">
+			<classpath refid="master-classpath"/>
+		</javac>	
+		<javac srcdir="${src.sms.dir}" destdir="${classes.dir}"
+				encoding="utf-8"  source="${javac.src.ver}" target="${javac.target.ver}" debug="true" includeantruntime="on"
+				deprecation="false" optimize="false" failonerror="true">
+			<classpath refid="master-classpath"/>
+		</javac>
+		<javac srcdir="${src.message.dir}" destdir="${classes.dir}"
+				encoding="utf-8"  source="${javac.src.ver}" target="${javac.target.ver}" debug="true" includeantruntime="on"
+				deprecation="false" optimize="false" failonerror="true">
+			<classpath refid="master-classpath"/>
+		</javac>
+		<echo message="copy config files."/>
+		<copy todir="${classes.dir}">
+			<fileset dir="${config.dir}"></fileset>
+		</copy>
+	</target>
+	
+	<!-- usage -->
+	<target name="usage">
+		<echo message="build-sms/build-message/build-form/build-media/build-ali/build-bizbase/build-bizbase-ex/build-workflow/build-base: compile java sources into new jar files."/>
+		<echo message="prepare-build: copy lib files and copy config files into classpath directory."/>
+		<echo message="easy-build: compile java sources to .class into /WEB-INF/classes."/>
+		<echo message="ivy-clean-cache: clean jar local cache,usually not use."/>
+		<echo message="ivy-retrieve: get build and release jar."/>
+		<echo message="ivy-retrieve-build: get build jar."/>
+		<echo message="ivy-retrieve-release: get build jar."/>
+	</target>
+
+	<target name="ivy-retrieve" depends="ivy-retrieve-build,ivy-retrieve-release"/>
+	
+	<target name="ivy-retrieve-build">
+		<delete dir="${lib.dir}/build"/>
+		<ivy:retrieve conf="${ivy.build.config}" file="${ant.dir}/ivy.xml" pattern="${lib.dir}/build/[artifact]-[revision](-[classifier]).[ext]"/>
+    </target>
+	<target name="ivy-retrieve-release">
+		<delete dir="${lib.dir}/release"/>
+		<ivy:retrieve conf="${ivy.release.config}" file="${ant.dir}/ivy.xml" pattern="${lib.dir}/release/[artifact]-[revision](-[classifier]).[ext]"/>
+    </target>
+	<target name="ivy-clean-cache">
+		<ivy:cleancache/>
+		<delete dir="${lib.dir}/build"/>
+		<delete dir="${lib.dir}/release"/>
+	</target>
+
+</project>
