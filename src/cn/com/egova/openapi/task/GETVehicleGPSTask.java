@@ -32,7 +32,6 @@ public class GETVehicleGPSTask {
 
 	@Scheduled(cron="0 0/1 * * * ?")
 	public void synVehicleInfoGps(){
-
 		logger.info("开启定时任务，同步车辆信息");
 		vehicleOtherManager.saveOrUpdateVehicle();
 
